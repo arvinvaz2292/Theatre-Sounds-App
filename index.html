@@ -141,6 +141,13 @@ button{border:none;cursor:pointer;font-family:var(--mono);transition:all .14s}
 
 .pool-wrap{padding:0 18px}
 .active-pool{display:grid;grid-template-columns:repeat(auto-fill,minmax(360px,1fr));gap:14px;min-height:8px}
+.active-cat-divider{grid-column:1/-1;display:flex;align-items:center;gap:10px;font-size:9px;letter-spacing:2.5px;text-transform:uppercase;font-weight:600;margin-top:4px}
+.active-cat-divider:first-child{margin-top:0}
+.active-cat-divider span{padding:3px 10px;border-radius:11px;border:1px solid}
+.active-cat-divider.BGM span{color:var(--cat-bgm);border-color:rgba(64,196,255,.4);background:rgba(64,196,255,.08)}
+.active-cat-divider.SFX span{color:var(--cat-sfx);border-color:rgba(255,193,7,.4);background:rgba(255,193,7,.08)}
+.active-cat-divider.AMB span{color:var(--cat-amb);border-color:rgba(0,230,118,.4);background:rgba(0,230,118,.08)}
+.active-cat-divider::after{content:'';flex:1;height:1px;background:var(--border2)}
 .inactive-pool{display:flex;flex-direction:column;gap:5px;padding-bottom:20px}
 
 .cat-divider{padding:14px 0 4px;display:flex;align-items:center;gap:10px;font-size:9px;letter-spacing:2.5px;text-transform:uppercase;font-weight:600}
@@ -319,10 +326,20 @@ input[type=range].blue-r::-webkit-slider-thumb{background:var(--blue)}
 .exp-divider{height:1px;background:var(--border2);margin:0 15px}
 
 
-.exp-loop{background:var(--s2);border-top:1px solid var(--border2);border-bottom:1px solid var(--border2);padding:11px 15px}
-.exp-loop-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:9px}
+.exp-loop{background:var(--s2);border-top:1px solid var(--border2);border-bottom:1px solid var(--border2);padding:0}
+/* Loop is now a collapsible dropdown */
+.exp-loop-toggle{width:100%;display:flex;align-items:center;gap:10px;padding:11px 15px;background:transparent;border:none;cursor:pointer;font-family:var(--mono);transition:background .12s}
+.exp-loop-toggle:hover{background:rgba(255,255,255,.02)}
+.exp-loop-summary{margin-left:auto;font-size:10px;color:var(--muted);font-weight:600;letter-spacing:.3px}
+.exp-loop-summary.active{color:var(--amber)}
+.exp-loop-caret{font-size:10px;color:var(--muted2);width:12px;text-align:center}
+.exp-loop-dropdown{display:none;padding:0 15px 12px}
+.exp-loop-dropdown.open{display:block}
+.exp-loop-head{display:flex;align-items:center;justify-content:flex-end;margin-bottom:9px}
 .exp-loop-title{font-size:10px;letter-spacing:2px;color:var(--muted2);text-transform:uppercase;font-weight:600}
 .exp-loop-right{display:flex;align-items:center;gap:10px}
+/* BGM tracks: no loop / cue at all */
+.track-item.is-bgm .exp-loopcue{display:none}
 .tog{position:relative;width:36px;height:20px;flex-shrink:0}
 .tog input{opacity:0;width:0;height:0;position:absolute}
 .tog-track{position:absolute;inset:0;background:var(--s3);border-radius:20px;border:1px solid var(--border);cursor:pointer;transition:background .2s,border-color .2s}
@@ -383,14 +400,15 @@ input[type=range].blue-r::-webkit-slider-thumb{background:var(--blue)}
 .pool-add-btn:hover{border-color:var(--green);color:var(--green)}
 
 /* ══ FLOATING CONTROL WINDOW ══ */
-.float-window{position:fixed;top:70px;right:22px;width:300px;background:rgba(14,19,24,.97);backdrop-filter:blur(16px);border:1px solid var(--border);border-radius:14px;box-shadow:0 16px 50px rgba(0,0,0,.6);z-index:800;display:flex;flex-direction:column;max-height:calc(100vh - 110px);transition:opacity .2s,transform .2s}
+.float-window{position:fixed;top:70px;right:22px;width:300px;background:rgba(14,19,24,.98);backdrop-filter:blur(16px);border:1px solid var(--border);border-radius:14px;box-shadow:0 16px 50px rgba(0,0,0,.6);z-index:800;display:flex;flex-direction:column;max-height:calc(100vh - 110px);transition:opacity .2s,transform .2s;contain:layout style;will-change:left,top}
+.float-window.dragging{transition:none;box-shadow:0 24px 60px rgba(0,0,0,.75)}
 .float-window.hidden{opacity:0;transform:scale(.95);pointer-events:none}
-.float-handle{display:flex;align-items:center;justify-content:space-between;padding:11px 14px;cursor:grab;border-bottom:1px solid var(--border);background:rgba(64,196,255,.06);border-radius:14px 14px 0 0;user-select:none}
+.float-handle{display:flex;align-items:center;justify-content:space-between;padding:11px 14px;cursor:grab;border-bottom:1px solid var(--border);background:rgba(64,196,255,.06);border-radius:14px 14px 0 0;user-select:none;-webkit-user-select:none;touch-action:none}
 .float-handle:active{cursor:grabbing}
-.float-title{font-size:11px;letter-spacing:2px;color:var(--blue);font-weight:600}
+.float-title{font-size:11px;letter-spacing:2px;color:var(--blue);font-weight:600;pointer-events:none}
 .float-close{background:transparent;border:none;color:var(--muted);font-size:13px;cursor:pointer;width:24px;height:24px;border-radius:5px;transition:all .12s}
 .float-close:hover{color:var(--red);background:var(--s3)}
-.float-body{padding:13px 14px;overflow-y:auto;display:flex;flex-direction:column;gap:11px}
+.float-body{padding:13px 14px;overflow-y:auto;display:flex;flex-direction:column;gap:11px;-webkit-overflow-scrolling:touch}
 .float-body::-webkit-scrollbar{width:5px}
 .float-body::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px}
 
@@ -616,7 +634,8 @@ input[type=range].blue-r::-webkit-slider-thumb{background:var(--blue)}
 let tracks=[], scenes=[], groups=[], masterVol=1, uid=0, gid=0, activeSceneId=null;
 let favourites=[]; // one-shot favourite sounds: {id,name,src,filename}
 let fid=0;
-const catVol={BGM:1,SFX:1,AMB:1}; // per-category volume multipliers
+const catVol={BGM:1,SFX:1,AMB:1}; // per-category volume multipliers (fader target)
+const catLiveVol={BGM:1,SFX:1,AMB:1}; // actual live category level (for fades)
 const catFadeTimer={BGM:null,SFX:null,AMB:null};
 const seekDragging={};
 const expandedIds=new Set();
@@ -1006,7 +1025,9 @@ function nudgeMaster(delta){
 
 // ── Category volume (BGM / SFX / AMB) ──
 function setCatVol(cat,v){
+  clearInterval(catFadeTimer[cat]); // manual move cancels any running fade
   catVol[cat]=parseFloat(v);
+  catLiveVol[cat]=catVol[cat]; // manual move sets the live level directly
   tracks.filter(t=>t.cat===cat).forEach(t=>{ if(t.ws) t.ws.setVolume(effectiveVol(t)); });
   const lbl=document.getElementById(`catvol-val-${cat}`);
   if(lbl) lbl.textContent=Math.round(catVol[cat]*100)+'%';
@@ -1019,34 +1040,55 @@ function nudgeCatVol(cat,delta){
   setCatVol(cat,catVol[cat]);
 }
 
-// Fade an entire category's volume multiplier
+// Fade an entire category — mirrors the track-card Fade In/Out behaviour:
+//  • Fade In ramps the actual audio from its current live level UP to the fader's
+//    set value over 2s, leaving the fader knob where it is. If the fader sits at 0,
+//    it bumps to 100% first (same as the track version).
+//  • Fade Out ramps the audio DOWN to silence over 2s, leaving the fader knob put,
+//    so a later Fade In returns to that remembered level.
+// We track the live audio level in catLiveVol[cat], separate from the stored catVol[cat].
 function catFade(cat,dir){
   clearInterval(catFadeTimer[cat]);
   const FADE_MS=2000;
-  const startVol = (dir==='in') ? 0 : (catVol[cat]??1);
-  const target = (dir==='in') ? ((catVol[cat]<=0.01?1:catVol[cat])||1) : 0;
-  if(dir==='in' && catVol[cat]<=0.01) catVol[cat]=1;
-  const savedTarget = (dir==='in') ? catVol[cat] : 0;
+  // Where the audio currently sits (live). Initialise to the stored fader value.
+  if(catLiveVol[cat]===undefined) catLiveVol[cat]=catVol[cat]??1;
+  let target;
+  if(dir==='in'){
+    target = (catVol[cat]<=0.01) ? 1 : catVol[cat];
+    if(catVol[cat]<=0.01){
+      catVol[cat]=1;
+      const sl=document.getElementById(`catvol-slider-${cat}`); if(sl) sl.value=1;
+      const lbl=document.getElementById(`catvol-val-${cat}`); if(lbl) lbl.textContent='100%';
+    }
+  } else {
+    target = 0;
+  }
+  const startLevel = catLiveVol[cat];
+  if(Math.abs(startLevel-target)<0.005){
+    catLiveVol[cat]=target;
+    applyCatLive(cat);
+    return;
+  }
   const t0=Date.now();
   catFadeTimer[cat]=setInterval(()=>{
     const r=Math.min((Date.now()-t0)/FADE_MS,1);
-    const cur = startVol+(savedTarget-startVol)*r;
-    // temporarily apply cur as the category multiplier
-    const prev=catVol[cat];
-    catVol[cat]=cur;
-    tracks.filter(t=>t.cat===cat).forEach(t=>{ if(t.ws) t.ws.setVolume(effectiveVol(t)); });
-    catVol[cat]=prev; // restore stored target (slider stays put visually)
+    catLiveVol[cat]=startLevel+(target-startLevel)*r;
+    applyCatLive(cat);
     if(r>=1){
       clearInterval(catFadeTimer[cat]);
-      catVol[cat]=savedTarget;
-      tracks.filter(t=>t.cat===cat).forEach(t=>{ if(t.ws) t.ws.setVolume(effectiveVol(t)); });
-      const lbl=document.getElementById(`catvol-val-${cat}`);
-      if(lbl) lbl.textContent=Math.round(catVol[cat]*100)+'%';
-      const sl=document.getElementById(`catvol-slider-${cat}`);
-      if(sl) sl.value=catVol[cat];
-      autoSave();
+      catLiveVol[cat]=target;
+      applyCatLive(cat);
     }
   },30);
+}
+
+// Apply the live category multiplier (catLiveVol) to all tracks in that category,
+// without disturbing the stored fader value.
+function applyCatLive(cat){
+  const prev=catVol[cat];
+  catVol[cat]=catLiveVol[cat];
+  tracks.filter(t=>t.cat===cat).forEach(t=>{ if(t.ws) t.ws.setVolume(effectiveVol(t)); });
+  catVol[cat]=prev;
 }
 
 // ════════════════════════════════════════════════
@@ -1068,7 +1110,7 @@ function uploadFavourites(event){
 function fireFavourite(fid_){
   const fav=favourites.find(f=>f.id===fid_); if(!fav||!fav.src){ showToast('No audio for this favourite — re-upload'); return; }
   const a=new Audio(fav.src);
-  a.volume=masterVol;
+  a.volume=0.5; // favourites always fire at 50%
   a.play().catch(()=>{});
   const btn=document.querySelector(`[data-fav="${fid_}"]`);
   if(btn){ btn.classList.add('fav-fired'); setTimeout(()=>btn.classList.remove('fav-fired'),300); }
@@ -1116,22 +1158,52 @@ function makeFloatingDraggable(){
   const w=document.getElementById('float-window');
   const handle=document.getElementById('float-handle');
   if(!w||!handle) return;
-  let dragging=false, offX=0, offY=0;
-  const start=(x,y)=>{ dragging=true; const r=w.getBoundingClientRect(); offX=x-r.left; offY=y-r.top; w.style.transition='none'; };
+  let dragging=false, offX=0, offY=0, curX=0, curY=0, raf=null;
+
+  // Track current position in px (left/top), seeded from its rendered spot
+  const initPos=()=>{
+    const r=w.getBoundingClientRect();
+    curX=r.left; curY=r.top;
+    w.style.left=curX+'px'; w.style.top=curY+'px';
+    w.style.right='auto'; w.style.bottom='auto';
+  };
+
+  const start=(x,y)=>{
+    if(!w.style.left) initPos();
+    dragging=true;
+    const r=w.getBoundingClientRect();
+    offX=x-r.left; offY=y-r.top;
+    w.style.transition='none';
+    w.classList.add('dragging');
+  };
+  const apply=()=>{
+    raf=null;
+    w.style.left=curX+'px';
+    w.style.top=curY+'px';
+  };
   const move=(x,y)=>{
     if(!dragging) return;
     let nx=x-offX, ny=y-offY;
-    nx=Math.max(0,Math.min(window.innerWidth-w.offsetWidth,nx));
-    ny=Math.max(0,Math.min(window.innerHeight-w.offsetHeight,ny));
-    w.style.left=nx+'px'; w.style.top=ny+'px'; w.style.right='auto'; w.style.bottom='auto';
+    nx=Math.max(4,Math.min(window.innerWidth-w.offsetWidth-4,nx));
+    ny=Math.max(4,Math.min(window.innerHeight-w.offsetHeight-4,ny));
+    curX=nx; curY=ny;
+    if(!raf) raf=requestAnimationFrame(apply);
   };
-  const end=()=>{ dragging=false; };
+  const end=()=>{ dragging=false; w.classList.remove('dragging'); };
+
   handle.addEventListener('mousedown',e=>{ start(e.clientX,e.clientY); e.preventDefault(); });
   document.addEventListener('mousemove',e=>move(e.clientX,e.clientY));
   document.addEventListener('mouseup',end);
-  handle.addEventListener('touchstart',e=>{ const t=e.touches[0]; start(t.clientX,t.clientY); },{passive:true});
-  document.addEventListener('touchmove',e=>{ if(dragging){ const t=e.touches[0]; move(t.clientX,t.clientY); } },{passive:true});
+
+  // Touch: non-passive so we can preventDefault and stop the page scrolling under the drag
+  handle.addEventListener('touchstart',e=>{ const t=e.touches[0]; start(t.clientX,t.clientY); e.preventDefault(); },{passive:false});
+  document.addEventListener('touchmove',e=>{
+    if(!dragging) return;
+    const t=e.touches[0]; move(t.clientX,t.clientY);
+    e.preventDefault(); // block page scroll while dragging the window
+  },{passive:false});
   document.addEventListener('touchend',end);
+  document.addEventListener('touchcancel',end);
 }
 
 // ════════════════════════════════════════════════
@@ -1322,43 +1394,51 @@ function buildTrackElement(t){
     </div>
   </div>
 
-  <div class="exp-divider"></div>
-
-  <div class="exp-loop">
-    <div class="exp-loop-head">
-      <span class="exp-loop-title">Loop Region</span>
-      <div class="exp-loop-right">
-        <span class="exp-loop-state" data-role="loop-state">${t.loopEnabled?'ON':'OFF'}</span>
-        <label class="tog">
-          <input type="checkbox" data-role="loop-tog" ${t.loopEnabled?'checked':''} onchange="toggleLoop(${t.id},this.checked)">
-          <div class="tog-track"></div><div class="tog-thumb"></div>
-        </label>
-        <div class="exp-loop-count">× <input type="number" data-role="loop-cnt" min="0" max="99" value="${t.loopCount}" title="Repeats (0=∞)" oninput="tById(${t.id}).loopCount=parseInt(this.value)||0;tById(${t.id}).loopPlays=0;autoSave()"></div>
+  <!-- Loop + Cue area — hidden entirely for BGM tracks via .track-item.is-bgm -->
+  <div class="exp-loopcue" data-role="loopcue">
+    <div class="exp-divider"></div>
+    <div class="exp-loop">
+      <button class="exp-loop-toggle" data-role="loop-toggle" onclick="toggleLoopDropdown(${t.id})">
+        <span class="exp-loop-title">Loop Region</span>
+        <span class="exp-loop-summary" data-role="loop-summary">Off</span>
+        <span class="exp-loop-caret" data-role="loop-caret">▸</span>
+      </button>
+      <div class="exp-loop-dropdown" data-role="loop-dropdown">
+        <div class="exp-loop-head">
+          <div class="exp-loop-right">
+            <span class="exp-loop-state" data-role="loop-state">${t.loopEnabled?'ON':'OFF'}</span>
+            <label class="tog">
+              <input type="checkbox" data-role="loop-tog" ${t.loopEnabled?'checked':''} onchange="toggleLoop(${t.id},this.checked)">
+              <div class="tog-track"></div><div class="tog-thumb"></div>
+            </label>
+            <div class="exp-loop-count">× <input type="number" data-role="loop-cnt" min="0" max="99" value="${t.loopCount}" title="Repeats (0=∞)" oninput="tById(${t.id}).loopCount=parseInt(this.value)||0;tById(${t.id}).loopPlays=0;autoSave()"></div>
+          </div>
+        </div>
+        <div class="exp-loop-chips">
+          <div class="exp-loop-chip"><div class="exp-chip-lbl">In</div><div class="exp-chip-val" data-role="loop-in">--:--</div></div>
+          <div class="exp-loop-chip"><div class="exp-chip-lbl">Out</div><div class="exp-chip-val" data-role="loop-out">--:--</div></div>
+          <div class="exp-loop-chip"><div class="exp-chip-lbl">Length</div><div class="exp-chip-val" data-role="loop-len">--:--</div></div>
+        </div>
+        <div class="exp-loop-actions">
+          <button class="exp-loop-btn" onclick="setLoopPt(${t.id},'start')">SET IN</button>
+          <button class="exp-loop-btn" onclick="setLoopPt(${t.id},'end')">SET OUT</button>
+          <button class="exp-loop-btn" onclick="jumpLoop(${t.id},'start')">⏮ IN</button>
+          <button class="exp-loop-btn" onclick="jumpLoop(${t.id},'end')">OUT ⏭</button>
+          <button class="exp-loop-btn" onclick="clearLoop(${t.id})">CLEAR</button>
+        </div>
+        <div class="exp-loop-hint">Drag waveform to draw region · drag edges to trim · SET IN/OUT at playhead</div>
       </div>
     </div>
-    <div class="exp-loop-chips">
-      <div class="exp-loop-chip"><div class="exp-chip-lbl">In</div><div class="exp-chip-val" data-role="loop-in">--:--</div></div>
-      <div class="exp-loop-chip"><div class="exp-chip-lbl">Out</div><div class="exp-chip-val" data-role="loop-out">--:--</div></div>
-      <div class="exp-loop-chip"><div class="exp-chip-lbl">Length</div><div class="exp-chip-val" data-role="loop-len">--:--</div></div>
-    </div>
-    <div class="exp-loop-actions">
-      <button class="exp-loop-btn" onclick="setLoopPt(${t.id},'start')">SET IN</button>
-      <button class="exp-loop-btn" onclick="setLoopPt(${t.id},'end')">SET OUT</button>
-      <button class="exp-loop-btn" onclick="jumpLoop(${t.id},'start')">⏮ IN</button>
-      <button class="exp-loop-btn" onclick="jumpLoop(${t.id},'end')">OUT ⏭</button>
-      <button class="exp-loop-btn" onclick="clearLoop(${t.id})">CLEAR</button>
-    </div>
-    <div class="exp-loop-hint">Drag waveform to draw region · drag edges to trim · SET IN/OUT at playhead</div>
-  </div>
 
-  <div class="exp-divider"></div>
+    <div class="exp-divider"></div>
 
-  <div class="exp-cues">
-    <div class="exp-cues-head">
-      <span class="exp-cues-title">Cue Points</span>
-      <button class="exp-add-cue" onclick="addCue(${t.id})">+ Mark</button>
+    <div class="exp-cues">
+      <div class="exp-cues-head">
+        <span class="exp-cues-title">Cue Points</span>
+        <button class="exp-add-cue" onclick="addCue(${t.id})">+ Mark</button>
+      </div>
+      <div class="exp-cue-list" data-role="cuelist"></div>
     </div>
-    <div class="exp-cue-list" data-role="cuelist"></div>
   </div>
 </div>`;
   t.el=el;
@@ -1409,6 +1489,8 @@ function refreshTrackDisplay(t){
   t.el.style.setProperty('--accent',t.accent);
   // Group badge
   refreshTrackGroupBadge(t);
+  // BGM tracks have no loop/cue — hide that whole area
+  t.el.classList.toggle('is-bgm', t.cat==='BGM');
 }
 
 function refreshPlayUI(t){
@@ -1444,6 +1526,30 @@ function refreshLoopUI(t){
   const li=role(t,'loop-in'); if(li) li.textContent=t.loopStart!==null?fmtT(t.loopStart):'--:--';
   const lo=role(t,'loop-out'); if(lo) lo.textContent=t.loopEnd!==null?fmtT(t.loopEnd):'--:--';
   const ll=role(t,'loop-len'); if(ll) ll.textContent=(t.loopStart!==null&&t.loopEnd!==null)?fmtT(t.loopEnd-t.loopStart):'--:--';
+  // Dropdown summary line
+  const sum=role(t,'loop-summary');
+  if(sum){
+    if(t.loopEnabled && t.loopStart!==null && t.loopEnd!==null){
+      sum.textContent=`On · ${fmtT(t.loopStart)}–${fmtT(t.loopEnd)}${t.loopCount>0?` ×${t.loopCount}`:' ∞'}`;
+      sum.classList.add('active');
+    } else if(t.loopStart!==null && t.loopEnd!==null){
+      sum.textContent=`Region set (off)`;
+      sum.classList.remove('active');
+    } else {
+      sum.textContent='Off';
+      sum.classList.remove('active');
+    }
+  }
+}
+
+// Expand/collapse the loop dropdown inside a track
+function toggleLoopDropdown(id){
+  const t=tById(id); if(!t?.el) return;
+  const dd=role(t,'loop-dropdown');
+  const caret=role(t,'loop-caret');
+  if(!dd) return;
+  const open=dd.classList.toggle('open');
+  if(caret) caret.textContent=open?'▾':'▸';
 }
 
 function refreshCueList(t){
@@ -1493,8 +1599,8 @@ function layoutTracks(){
   const sorted=[...tracks].sort((a,b)=>a.order-b.order);
   let activeCount=0, inactiveCount=0;
 
-  // Track which inactive cats have items
   const inactiveByCat={BGM:[],SFX:[],AMB:[]};
+  const activeByCat={BGM:[],SFX:[],AMB:[]};
 
   sorted.forEach(t=>{
     if(!t.el) buildTrackElement(t);
@@ -1503,14 +1609,24 @@ function layoutTracks(){
     refreshSceneButtons(t);
     if(expand){
       activeCount++;
-      // append to active pool (this MOVES the existing element)
-      activePool.appendChild(t.el);
-      // init WaveSurfer if needed
+      activeByCat[t.cat].push(t);
       if(!t.ws && t.src) initWS(t);
     } else {
       inactiveByCat[t.cat].push(t);
       inactiveCount++;
     }
+  });
+
+  // Rebuild active pool grouped by category (BGM → SFX → AMB)
+  activePool.querySelectorAll('.active-cat-divider').forEach(d=>d.remove());
+  CAT_ORDER.forEach(cat=>{
+    const items=activeByCat[cat];
+    if(!items.length) return;
+    const div=document.createElement('div');
+    div.className=`active-cat-divider ${cat}`;
+    div.innerHTML=`<span>${cat}</span>`;
+    activePool.appendChild(div);
+    items.forEach(t=>activePool.appendChild(t.el)); // MOVES existing element
   });
 
   // Rebuild inactive pool with group bars first, then category dividers + tracks
@@ -2432,6 +2548,7 @@ function loadAutoSave(){
 // Sync the category fader sliders + labels to current catVol values
 function syncCatVolUI(){
   CAT_ORDER.forEach(cat=>{
+    catLiveVol[cat]=catVol[cat];
     const sl=document.getElementById(`catvol-slider-${cat}`); if(sl) sl.value=catVol[cat];
     const lbl=document.getElementById(`catvol-val-${cat}`); if(lbl) lbl.textContent=Math.round(catVol[cat]*100)+'%';
   });
