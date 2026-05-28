@@ -400,10 +400,11 @@ input[type=range].blue-r::-webkit-slider-thumb{background:var(--blue)}
 .pool-add-btn:hover{border-color:var(--green);color:var(--green)}
 
 /* ══ FLOATING CONTROL WINDOW ══ */
-.float-window{position:fixed;top:70px;right:22px;width:300px;background:rgba(14,19,24,.98);backdrop-filter:blur(16px);border:1px solid var(--border);border-radius:14px;box-shadow:0 16px 50px rgba(0,0,0,.6);z-index:800;display:flex;flex-direction:column;max-height:calc(100vh - 110px);transition:opacity .2s,transform .2s;contain:layout style;will-change:left,top}
-.float-window.dragging{transition:none;box-shadow:0 24px 60px rgba(0,0,0,.75)}
+.float-window{position:fixed;top:70px;right:22px;width:300px;background:rgba(14,19,24,.98);backdrop-filter:blur(16px);border:1px solid var(--border);border-radius:14px;box-shadow:0 16px 50px rgba(0,0,0,.6);z-index:800;display:flex;flex-direction:column;max-height:calc(100dvh - 110px);transition:opacity .2s,transform .2s;contain:layout style;will-change:left,top;overscroll-behavior:contain;-webkit-touch-callout:none}
+.float-window.dragging{transition:none;box-shadow:0 24px 60px rgba(0,0,0,.75);background:rgb(14,19,24);backdrop-filter:none}
 .float-window.hidden{opacity:0;transform:scale(.95);pointer-events:none}
-.float-handle{display:flex;align-items:center;justify-content:space-between;padding:11px 14px;cursor:grab;border-bottom:1px solid var(--border);background:rgba(64,196,255,.06);border-radius:14px 14px 0 0;user-select:none;-webkit-user-select:none;touch-action:none}
+.float-handle{display:flex;align-items:center;justify-content:space-between;padding:11px 14px;cursor:grab;border-bottom:1px solid var(--border);background:rgba(64,196,255,.06);border-radius:14px 14px 0 0;user-select:none;-webkit-user-select:none;touch-action:none;-webkit-tap-highlight-color:transparent}
+.float-handle *{user-select:none;-webkit-user-select:none}
 .float-handle:active{cursor:grabbing}
 .float-title{font-size:11px;letter-spacing:2px;color:var(--blue);font-weight:600;pointer-events:none}
 .float-close{background:transparent;border:none;color:var(--muted);font-size:13px;cursor:pointer;width:24px;height:24px;border-radius:5px;transition:all .12s}
@@ -1158,52 +1159,55 @@ function makeFloatingDraggable(){
   const w=document.getElementById('float-window');
   const handle=document.getElementById('float-handle');
   if(!w||!handle) return;
-  let dragging=false, offX=0, offY=0, curX=0, curY=0, raf=null;
+  let dragging=false, pointerId=null, offX=0, offY=0, curX=0, curY=0, raf=null;
 
-  // Track current position in px (left/top), seeded from its rendered spot
   const initPos=()=>{
     const r=w.getBoundingClientRect();
     curX=r.left; curY=r.top;
     w.style.left=curX+'px'; w.style.top=curY+'px';
     w.style.right='auto'; w.style.bottom='auto';
   };
-
-  const start=(x,y)=>{
-    if(!w.style.left) initPos();
-    dragging=true;
-    const r=w.getBoundingClientRect();
-    offX=x-r.left; offY=y-r.top;
-    w.style.transition='none';
-    w.classList.add('dragging');
-  };
   const apply=()=>{
     raf=null;
     w.style.left=curX+'px';
     w.style.top=curY+'px';
   };
-  const move=(x,y)=>{
-    if(!dragging) return;
-    let nx=x-offX, ny=y-offY;
+
+  handle.addEventListener('pointerdown',e=>{
+    // Don't initiate drag from the close button
+    if(e.target.closest('.float-close')) return;
+    if(!w.style.left) initPos();
+    dragging=true;
+    pointerId=e.pointerId;
+    const r=w.getBoundingClientRect();
+    offX=e.clientX-r.left;
+    offY=e.clientY-r.top;
+    w.classList.add('dragging');
+    try{ handle.setPointerCapture(pointerId); }catch(_){ }
+    e.preventDefault();
+  });
+
+  handle.addEventListener('pointermove',e=>{
+    if(!dragging || e.pointerId!==pointerId) return;
+    let nx=e.clientX-offX, ny=e.clientY-offY;
     nx=Math.max(4,Math.min(window.innerWidth-w.offsetWidth-4,nx));
     ny=Math.max(4,Math.min(window.innerHeight-w.offsetHeight-4,ny));
     curX=nx; curY=ny;
     if(!raf) raf=requestAnimationFrame(apply);
+    e.preventDefault();
+  });
+
+  const stop=e=>{
+    if(!dragging || (e && e.pointerId!==pointerId)) return;
+    dragging=false;
+    w.classList.remove('dragging');
+    try{ handle.releasePointerCapture(pointerId); }catch(_){ }
+    pointerId=null;
+    if(raf){ cancelAnimationFrame(raf); raf=null; apply(); }
   };
-  const end=()=>{ dragging=false; w.classList.remove('dragging'); };
-
-  handle.addEventListener('mousedown',e=>{ start(e.clientX,e.clientY); e.preventDefault(); });
-  document.addEventListener('mousemove',e=>move(e.clientX,e.clientY));
-  document.addEventListener('mouseup',end);
-
-  // Touch: non-passive so we can preventDefault and stop the page scrolling under the drag
-  handle.addEventListener('touchstart',e=>{ const t=e.touches[0]; start(t.clientX,t.clientY); e.preventDefault(); },{passive:false});
-  document.addEventListener('touchmove',e=>{
-    if(!dragging) return;
-    const t=e.touches[0]; move(t.clientX,t.clientY);
-    e.preventDefault(); // block page scroll while dragging the window
-  },{passive:false});
-  document.addEventListener('touchend',end);
-  document.addEventListener('touchcancel',end);
+  handle.addEventListener('pointerup',stop);
+  handle.addEventListener('pointercancel',stop);
+  handle.addEventListener('lostpointercapture',stop);
 }
 
 // ════════════════════════════════════════════════
