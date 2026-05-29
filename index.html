@@ -368,9 +368,6 @@ input[type=range].blue-r::-webkit-slider-thumb{background:var(--blue)}
 .exp-loop-btn{flex:1;min-width:62px;background:var(--s3);border:1px solid var(--border);color:var(--text2);font-size:9px;letter-spacing:1px;text-transform:uppercase;padding:7px 6px;border-radius:6px;cursor:pointer;font-family:var(--mono);transition:all .12s;text-align:center;font-weight:600}
 .exp-loop-btn:hover{border-color:var(--amber);color:var(--amber)}
 .exp-loop-hint{font-size:9px;color:var(--muted);font-style:italic;margin-top:7px;letter-spacing:.3px}
-.exp-loop-xfade-row{display:flex;align-items:center;gap:8px;margin-top:8px;padding-top:8px;border-top:1px dashed var(--border2);font-size:10px;color:var(--text2);cursor:pointer;user-select:none}
-.exp-loop-xfade-row input[type=checkbox]{width:16px;height:16px;accent-color:var(--green);cursor:pointer}
-.exp-loop-xfade-hint{color:var(--muted);font-style:italic}
 
 .exp-cues{padding:10px 15px}
 .exp-cues-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:7px}
@@ -695,9 +692,6 @@ function mkTrack(name='New Track',cat='AMB'){
   return{id:++uid,name,cat,src:null,filename:null,
     playing:false,volume:1,speed:1,
     loopEnabled:false,loopStart:null,loopEnd:null,loopCount:0,loopPlays:0,
-    loopXfade:false,        // smooth crossfade between loop end & start
-    _shadowAudio:null,      // secondary <audio> element used during xfade
-    _xfading:false,         // true while a loop crossfade is in flight
     autoStop:0,autoStopTimer:null,fadeTimer:null,
     cues:[],ws:null,region:null,_rp:null,
     accent:CAT_ACCENTS[cat][idx],order:uid,
@@ -1274,7 +1268,6 @@ function uploadMulti(event){
     if(orphan){
       orphan.src=URL.createObjectURL(f);
       if(orphan.ws){ orphan.ws.destroy(); orphan.ws=null; orphan._rp=null; orphan.region=null; }
-      if(orphan._shadowAudio){ try{ orphan._shadowAudio.pause(); }catch(_){} orphan._shadowAudio=null; }
       if(isTrackExpanded(orphan)) initWS(orphan);
       refreshTrackDisplay(orphan);
       matched++;
@@ -1304,7 +1297,6 @@ function uploadSingle(event,id){
   const t=tById(id); if(!t) return;
   if(t.src) URL.revokeObjectURL(t.src);
   if(t.ws){ t.ws.destroy(); t.ws=null; t._rp=null; t.region=null; }
-  if(t._shadowAudio){ try{ t._shadowAudio.pause(); }catch(_){} t._shadowAudio=null; }
   t.src=URL.createObjectURL(f);
   t.filename=f.name;
   t.name=f.name.replace(/\.[^/.]+$/,'');
@@ -1467,10 +1459,6 @@ function buildTrackElement(t){
           <button class="exp-loop-btn" onclick="clearLoop(${t.id})">CLEAR</button>
         </div>
         <div class="exp-loop-hint">Drag waveform to draw region · drag edges to trim · SET IN/OUT at playhead</div>
-        <label class="exp-loop-xfade-row">
-          <input type="checkbox" data-role="loop-xfade" ${t.loopXfade?'checked':''} onchange="toggleLoopXfade(${t.id},this.checked)">
-          <span>Smooth loop <span class="exp-loop-xfade-hint">— crossfade 250ms at the seam</span></span>
-        </label>
       </div>
     </div>
 
@@ -1571,7 +1559,6 @@ function refreshSceneButtons(t){
 function refreshLoopUI(t){
   const ls=role(t,'loop-state'); if(ls) ls.textContent=t.loopEnabled?'ON':'OFF';
   const lt=role(t,'loop-tog'); if(lt) lt.checked=t.loopEnabled;
-  const lx=role(t,'loop-xfade'); if(lx) lx.checked=!!t.loopXfade;
   const lc=role(t,'loop-cnt'); if(lc) lc.value=t.loopCount;
   const li=role(t,'loop-in'); if(li) li.textContent=t.loopStart!==null?fmtT(t.loopStart):'--:--';
   const lo=role(t,'loop-out'); if(lo) lo.textContent=t.loopEnd!==null?fmtT(t.loopEnd):'--:--';
@@ -1794,8 +1781,8 @@ function initWS(t){
     const tcur=role(t,'tcur'); if(tcur) tcur.textContent=fmtT(cur);
   });
   ws.on('play',()=>{ t.playing=true; refreshPlayUI(t); updateStatus(); startAutoStop(t); });
-  ws.on('pause',()=>{ t.playing=false; refreshPlayUI(t); updateStatus(); if(t._shadowAudio){ try{ t._shadowAudio.pause(); }catch(_){} } });
-  ws.on('finish',()=>{ t.playing=false; refreshPlayUI(t); updateStatus(); if(t._shadowAudio){ try{ t._shadowAudio.pause(); }catch(_){} } });
+  ws.on('pause',()=>{ t.playing=false; refreshPlayUI(t); updateStatus(); });
+  ws.on('finish',()=>{ t.playing=false; refreshPlayUI(t); updateStatus(); });
   if(rp){
     rp.on('region-updated',r=>{ t.loopStart=r.start; t.loopEnd=r.end; refreshLoopUI(t); autoSave(); });
     rp.on('region-created',r=>{ rp.getRegions().forEach(x=>{ if(x.id!==r.id) x.remove(); }); t.region=r; t.loopStart=r.start; t.loopEnd=r.end; refreshLoopUI(t); autoSave(); });
@@ -1810,80 +1797,21 @@ function mkRegion(t){
 }
 
 // ════════════════════════════════════════════════
-// LOOP TICKER — two modes per track:
-//   1) hard cut (default): seekTo(loopStart) when playhead crosses loopEnd
-//   2) smooth crossfade: a shadow <audio> plays the loop-start while the main
-//      element finishes the tail; volumes ramp; then the shadow stops and the
-//      main element seeks back to loopStart and resumes alone.
-const LOOP_XFADE_S = 0.25;
-
-function ensureShadowAudio(t) {
-  if (t._shadowAudio || !t.src) return t._shadowAudio;
-  const a = new Audio();
-  a.src = t.src;
-  a.preload = 'auto';
-  a.volume = 0;
-  a.playbackRate = t.speed;
-  t._shadowAudio = a;
-  return a;
-}
-
-function startLoopXfade(t) {
-  if (t._xfading || !t.ws) return;
-  const dur = t.ws.getDuration() || 1;
-  const shadow = ensureShadowAudio(t);
-  if (!shadow) return;
-  try { shadow.currentTime = t.loopStart; } catch (_) { return; }
-  shadow.playbackRate = t.speed;
-  shadow.volume = 0;
-  t._xfading = true;
-  const p = shadow.play();
-  if (!p || !p.then) { t._xfading = false; return; }
-  p.then(function () {
-    const targetVol = effectiveVol(t);
-    const t0 = performance.now();
-    function step() {
-      const r = Math.min((performance.now() - t0) / (LOOP_XFADE_S * 1000), 1);
-      try { shadow.volume = targetVol * r; } catch (_) {}
-      try { if (t.ws) t.ws.setVolume(targetVol * (1 - r)); } catch (_) {}
-      if (r < 1 && t.playing) {
-        requestAnimationFrame(step);
-      } else {
-        try { t.ws.seekTo(t.loopStart / dur); } catch (_) {}
-        try { t.ws.setVolume(targetVol); } catch (_) {}
-        try { shadow.pause(); shadow.volume = 0; } catch (_) {}
-        t._xfading = false;
+// LOOP TICKER
+// ════════════════════════════════════════════════
+setInterval(()=>{
+  tracks.forEach(t=>{
+    if(!t.playing||!t.loopEnabled||t.loopStart===null||t.loopEnd===null||!t.ws) return;
+    const cur=t.ws.getCurrentTime();
+    if(cur>=t.loopEnd){
+      if(t.loopCount>0){
+        t.loopPlays++;
+        if(t.loopPlays>=t.loopCount){ t.loopPlays=0; t.ws.pause(); return; }
       }
+      t.ws.seekTo(t.loopStart/(t.ws.getDuration()||1));
     }
-    requestAnimationFrame(step);
-  }).catch(function () { t._xfading = false; });
-}
-
-setInterval(function () {
-  for (let i = 0; i < tracks.length; i++) {
-    const t = tracks[i];
-    if (!t.playing || !t.loopEnabled || t.loopStart === null || t.loopEnd === null || !t.ws) continue;
-    const cur = t.ws.getCurrentTime();
-    if (t.loopXfade) {
-      const trigger = t.loopEnd - LOOP_XFADE_S;
-      if (cur >= trigger && !t._xfading) {
-        if (t.loopCount > 0) {
-          t.loopPlays++;
-          if (t.loopPlays >= t.loopCount) { t.loopPlays = 0; t.ws.pause(); continue; }
-        }
-        startLoopXfade(t);
-      }
-    } else {
-      if (cur >= t.loopEnd) {
-        if (t.loopCount > 0) {
-          t.loopPlays++;
-          if (t.loopPlays >= t.loopCount) { t.loopPlays = 0; t.ws.pause(); continue; }
-        }
-        t.ws.seekTo(t.loopStart / (t.ws.getDuration() || 1));
-      }
-    }
-  }
-}, 80);
+  });
+},80);
 
 function setLoopPt(id,which){
   const t=tById(id); if(!t?.ws) return;
@@ -1911,17 +1839,7 @@ function toggleLoop(id,state){
   t.loopEnabled=state; t.loopPlays=0;
   refreshLoopUI(t); autoSave();
 }
-function toggleLoopXfade(id,state){
-  const t=tById(id); if(!t) return;
-  t.loopXfade=state;
-  // If turning off, halt any in-flight crossfade and reset volume
-  if(!state && t._shadowAudio){
-    try{ t._shadowAudio.pause(); t._shadowAudio.volume=0; }catch(_){}
-    t._xfading=false;
-    if(t.ws){ try{ t.ws.setVolume(effectiveVol(t)); }catch(_){} }
-  }
-  autoSave();
-}
+
 
 // ════════════════════════════════════════════════
 // CUES
@@ -1963,7 +1881,6 @@ function deleteTrack(id){
   const t=tById(id); if(!t) return;
   clearAutoStop(t);
   if(t.ws) t.ws.destroy();
-  if(t._shadowAudio){ try{ t._shadowAudio.pause(); }catch(_){} t._shadowAudio=null; }
   if(t.src) URL.revokeObjectURL(t.src);
   if(t.el) t.el.remove();
   // Remove from any group
@@ -2004,8 +1921,6 @@ function stopTrack(id){
   const t=tById(id); if(!t) return;
   clearAutoStop(t); clearInterval(t.fadeTimer);
   if(t.ws) t.ws.stop();
-  if(t._shadowAudio){ try{ t._shadowAudio.pause(); t._shadowAudio.volume=0; }catch(_){} }
-  t._xfading=false;
   t.playing=false; t.loopPlays=0;
   refreshPlayUI(t); updateStatus();
 }
@@ -2193,7 +2108,6 @@ function setSpeed(id,val,sliderEl){
   const t=tById(id); if(!t) return;
   t.speed=parseFloat(val);
   if(t.ws) t.ws.setPlaybackRate(t.speed);
-  if(t._shadowAudio){ try{ t._shadowAudio.playbackRate=t.speed; }catch(_){} }
   const sv=role(t,'spd-val'); if(sv) sv.textContent=t.speed.toFixed(2)+'x';
   const sl=role(t,'spd-lbl'); if(sl) sl.textContent=t.speed.toFixed(2)+'x';
   if(!sliderEl){
@@ -2582,7 +2496,7 @@ function migrateScenes(scenesArr){
 function stateToJSON(){
   return JSON.stringify({
     version:7,
-    tracks:tracks.map(t=>({id:t.id,name:t.name,cat:t.cat,volume:t.volume,speed:t.speed,loopEnabled:t.loopEnabled,loopStart:t.loopStart,loopEnd:t.loopEnd,loopCount:t.loopCount,loopXfade:t.loopXfade,accent:t.accent,order:t.order,cues:t.cues,autoStop:t.autoStop,filename:t.filename})),
+    tracks:tracks.map(t=>({id:t.id,name:t.name,cat:t.cat,volume:t.volume,speed:t.speed,loopEnabled:t.loopEnabled,loopStart:t.loopStart,loopEnd:t.loopEnd,loopCount:t.loopCount,accent:t.accent,order:t.order,cues:t.cues,autoStop:t.autoStop,filename:t.filename})),
     groups:groups.map(g=>({id:g.id,name:g.name,volume:g.volume,trackIds:g.trackIds})),
     favourites:favourites.map(f=>({id:f.id,name:f.name,filename:f.filename})),
     catVol:{BGM:catVol.BGM,SFX:catVol.SFX,AMB:catVol.AMB},
@@ -2617,7 +2531,6 @@ function deserializeTracks(arr){
       loopEnabled:td.loopEnabled||false,
       loopStart:td.loopStart??null, loopEnd:td.loopEnd??null,
       loopCount:td.loopCount||0,
-      loopXfade:td.loopXfade||false,
       accent:td.accent||t.accent,
       order:td.order||t.order,
       cues:td.cues||[],
