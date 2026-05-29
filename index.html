@@ -162,66 +162,34 @@ button{border:none;cursor:pointer;font-family:var(--mono);transition:all .14s}
 .cat-divider.AMB span{color:var(--cat-amb);border-color:rgba(0,230,118,.4);background:rgba(0,230,118,.08)}
 .cat-divider::after{content:'';flex:1;height:1px;background:var(--border2)}
 
-/* ═══ GROUPS — unified stem container ═══ */
+/* ═══ GROUPS — simple horizontal bar ═══ */
 .grp-section{margin-bottom:8px}
 .grp-section-label{padding:14px 0 6px;display:flex;align-items:center;gap:10px;font-size:9px;letter-spacing:2.5px;text-transform:uppercase;font-weight:600;color:#c89bff}
 .grp-section-label span:first-child{padding:3px 9px;border-radius:11px;border:1px solid rgba(200,155,255,.4);background:rgba(200,155,255,.08)}
 .grp-section-label::after{content:'';flex:1;height:1px;background:var(--border2)}
 
-.group-container{background:linear-gradient(180deg,rgba(200,155,255,.06) 0%,var(--s1) 50%);border:1px solid rgba(200,155,255,.3);border-radius:14px;margin-bottom:12px;overflow:hidden;transition:border-color .2s,box-shadow .2s}
-.group-container:hover{border-color:rgba(200,155,255,.5)}
-.group-container.is-playing{border-color:var(--green);box-shadow:0 0 0 1px var(--green2),0 0 30px rgba(0,230,118,.1)}
-
-.grp-header{display:flex;align-items:center;gap:9px;padding:11px 14px;background:rgba(200,155,255,.04);border-bottom:1px solid rgba(200,155,255,.12);flex-wrap:wrap}
-.grp-icon{font-size:18px;color:#c89bff;flex-shrink:0}
+.group-bar{background:linear-gradient(90deg,rgba(200,155,255,.10) 0%,rgba(200,155,255,.04) 30%,var(--s1) 100%);border:1px solid rgba(200,155,255,.3);border-radius:12px;display:flex;align-items:center;gap:9px;padding:10px 13px;margin-bottom:7px;transition:border-color .2s,box-shadow .2s;flex-wrap:wrap}
+.group-bar:hover{border-color:rgba(200,155,255,.5)}
+.group-bar.is-playing{border-color:var(--green);box-shadow:0 0 0 1px var(--green2),0 0 30px rgba(0,230,118,.1)}
+.grp-icon{font-size:16px;color:#c89bff;flex-shrink:0}
 .grp-info{flex:1;min-width:120px;overflow:hidden}
-.grp-name{font-family:var(--display);font-size:20px;letter-spacing:.5px;line-height:1.1;color:#e8d5ff;cursor:pointer;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.grp-name{font-family:var(--display);font-size:18px;letter-spacing:.5px;line-height:1.1;color:#e8d5ff;cursor:pointer;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .grp-name:hover{color:var(--green)}
-.grp-meta{font-size:10px;color:rgba(200,155,255,.6);letter-spacing:.5px;margin-top:2px}
-.grp-play{background:rgba(200,155,255,.1);border:1px solid rgba(200,155,255,.4);color:#c89bff;width:44px;height:44px;border-radius:8px;font-size:15px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center;transition:all .14s}
+.grp-meta{font-size:9px;color:rgba(200,155,255,.6);letter-spacing:.5px;margin-top:2px}
+.grp-play{background:rgba(200,155,255,.1);border:1px solid rgba(200,155,255,.4);color:#c89bff;width:38px;height:38px;border-radius:7px;font-size:14px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center;transition:all .14s}
 .grp-play:hover{background:rgba(200,155,255,.2);color:#fff;border-color:#c89bff}
 .grp-play.on{background:var(--green);color:#000;border-color:var(--green)}
-.grp-stop{background:var(--s2);border:1px solid var(--border);color:var(--muted2);width:44px;height:44px;border-radius:8px;font-size:14px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center;transition:all .14s}
+.grp-stop{background:var(--s2);border:1px solid var(--border);color:var(--muted2);width:38px;height:38px;border-radius:7px;font-size:13px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center;transition:all .14s}
 .grp-stop:hover{border-color:var(--red);color:var(--red)}
-.grp-vol-wrap{display:flex;align-items:center;gap:7px;flex:1;min-width:160px}
+.grp-vol-wrap{display:flex;align-items:center;gap:7px;flex:1;min-width:140px}
 .grp-vol-lbl{font-size:8px;letter-spacing:2px;color:rgba(200,155,255,.6);font-weight:600}
 .grp-vol-wrap input[type=range]{flex:1;height:4px}
 .grp-vol-wrap input[type=range]::-webkit-slider-thumb{background:#c89bff}
 .grp-vol-pct{font-size:12px;font-weight:600;color:#c89bff;min-width:38px;text-align:right;font-variant-numeric:tabular-nums}
-.grp-fade{background:transparent;border:1px solid rgba(200,155,255,.3);color:#c89bff;width:34px;height:34px;border-radius:6px;font-size:15px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center;transition:all .14s}
+.grp-fade{background:transparent;border:1px solid rgba(200,155,255,.3);color:#c89bff;width:30px;height:30px;border-radius:6px;font-size:14px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center;transition:all .14s}
 .grp-fade:hover{background:rgba(200,155,255,.15);border-color:#c89bff}
-.grp-del{background:transparent;border:1px solid transparent;color:var(--muted);font-size:13px;width:32px;height:32px;border-radius:5px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center;transition:all .12s}
+.grp-del{background:transparent;border:1px solid transparent;color:var(--muted);font-size:13px;width:28px;height:28px;border-radius:5px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center;transition:all .12s}
 .grp-del:hover{border-color:var(--red);color:var(--red)}
-
-/* Shared seek bar across all stems */
-.grp-seek-row{display:flex;align-items:center;gap:10px;padding:9px 14px;background:rgba(0,0,0,.18);border-bottom:1px solid rgba(200,155,255,.08)}
-.grp-time{font-size:10px;color:var(--muted2);font-variant-numeric:tabular-nums;min-width:48px}
-.grp-time:first-child{color:#c89bff;font-weight:600}
-.grp-seek{flex:1;height:5px}
-.grp-seek::-webkit-slider-thumb{background:#c89bff;width:14px;height:14px}
-
-/* Member stems area */
-.grp-members{display:flex;flex-direction:column;padding:4px 0}
-.grp-empty{padding:18px 14px;font-size:10px;color:var(--muted);font-style:italic;text-align:center}
-
-/* ═══ STEM MODE — when a track is inside a group, it renders as a slim row ═══ */
-.track-item.is-stem{background:transparent;border:none;border-radius:0;margin:0;border-top:1px solid rgba(200,155,255,.06);box-shadow:none!important}
-.track-item.is-stem:first-child{border-top:none}
-.track-item.is-stem .accent-bar{display:none}
-/* Hide everything in stem mode... */
-.track-item.is-stem .collapsed-view,
-.track-item.is-stem .expanded-view{display:none!important}
-/* ...and show the stem-specific row that the template always carries */
-.track-item.is-stem .stem-view{display:flex}
-.stem-view{display:none;align-items:center;gap:11px;padding:9px 14px}
-.stem-name{font-family:var(--mono);font-size:11px;font-weight:600;color:var(--text2);width:110px;flex-shrink:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;letter-spacing:.3px}
-.track-item.is-stem.is-playing .stem-name{color:var(--green)}
-.stem-wave{flex:1;height:36px;background:var(--s2);border-radius:6px;overflow:hidden;min-width:80px}
-.stem-vol-wrap{display:flex;align-items:center;gap:6px;width:140px;flex-shrink:0}
-.stem-vol-wrap input[type=range]{flex:1;height:3px}
-.stem-vol-pct{font-size:10px;color:var(--muted2);font-variant-numeric:tabular-nums;min-width:32px;text-align:right;font-weight:600}
-.stem-rm{background:transparent;border:none;color:var(--muted);font-size:14px;width:24px;height:24px;border-radius:4px;cursor:pointer;flex-shrink:0;transition:all .12s}
-.stem-rm:hover{color:var(--red);background:rgba(255,68,68,.1)}
 
 /* Group badge on collapsed track */
 .tc-grp-wrap{position:relative;flex-shrink:0}
@@ -943,68 +911,31 @@ function groupFade(id,dir){
   }
 }
 
-// ────── Group DOM — unified container with shared seek + stem members inside ──────
+// ────── Group DOM — simple horizontal bar (no unified container) ──────
 function buildGroupElement(g){
   const el=document.createElement('div');
-  el.className='group-container';
+  el.className='group-bar';
   el.id=`grp-${g.id}`;
   el.innerHTML=`
-    <div class="grp-header">
-      <span class="grp-icon">⛬</span>
-      <div class="grp-info">
-        <div class="grp-name" ondblclick="renameGroup('${g.id}')" data-grole="name" title="Double-click to rename"></div>
-        <div class="grp-meta" data-grole="meta"></div>
-      </div>
-      <button class="grp-play" data-grole="play" onclick="groupTogglePlay('${g.id}')" title="Play / pause all members in sync">▶</button>
-      <button class="grp-stop" onclick="groupStop('${g.id}')" title="Stop all members">■</button>
-      <div class="grp-vol-wrap">
-        <span class="grp-vol-lbl">GRP</span>
-        <input type="range" min="0" max="1" step="0.01" value="${g.volume}" data-grole="vol-slider" oninput="setGroupVolume('${g.id}',this.value)">
-        <span class="grp-vol-pct" data-grole="vol-pct">${Math.round(g.volume*100)}%</span>
-      </div>
-      <button class="grp-fade" onclick="groupFade('${g.id}','in')" title="Fade in group">↑</button>
-      <button class="grp-fade" onclick="groupFade('${g.id}','out')" title="Fade out group">↓</button>
-      <button class="grp-fade" onclick="groupResync('${g.id}')" title="Re-sync members to leader" style="font-size:13px">↻</button>
-      <button class="grp-del" onclick="deleteGroup('${g.id}')" title="Delete group">✕</button>
+    <div class="grp-icon">⛬</div>
+    <div class="grp-info">
+      <div class="grp-name" ondblclick="renameGroup('${g.id}')" data-grole="name" title="Double-click to rename"></div>
+      <div class="grp-meta" data-grole="meta"></div>
     </div>
-    <div class="grp-seek-row">
-      <span class="grp-time" data-grole="time-cur">0:00.0</span>
-      <input type="range" class="grp-seek" min="0" max="1000" value="0" data-grole="seek"
-        oninput="onGroupSeek('${g.id}',this.value)"
-        onmousedown="seekDragging['grp-${g.id}']=true" onmouseup="seekDragging['grp-${g.id}']=false"
-        ontouchstart="seekDragging['grp-${g.id}']=true" ontouchend="seekDragging['grp-${g.id}']=false">
-      <span class="grp-time" data-grole="time-dur" style="color:var(--muted)">--:--</span>
+    <button class="grp-play" data-grole="play" onclick="groupTogglePlay('${g.id}')" title="Play / pause all members in sync">▶</button>
+    <button class="grp-stop" onclick="groupStop('${g.id}')" title="Stop all members">■</button>
+    <div class="grp-vol-wrap">
+      <span class="grp-vol-lbl">GRP</span>
+      <input type="range" min="0" max="1" step="0.01" value="${g.volume}" data-grole="vol-slider" oninput="setGroupVolume('${g.id}',this.value)">
+      <span class="grp-vol-pct" data-grole="vol-pct">${Math.round(g.volume*100)}%</span>
     </div>
-    <div class="grp-members" data-grole="members"></div>
-    <div class="grp-empty" data-grole="empty">No tracks in this group yet. Use the G+ button on any track to add it here.</div>`;
+    <button class="grp-fade" onclick="groupFade('${g.id}','in')" title="Fade in group">↑</button>
+    <button class="grp-fade" onclick="groupFade('${g.id}','out')" title="Fade out group">↓</button>
+    <button class="grp-fade" onclick="groupResync('${g.id}')" title="Re-sync all members to first track" style="font-size:13px">↻</button>
+    <button class="grp-del" onclick="deleteGroup('${g.id}')" title="Delete group">✕</button>`;
   g.el=el;
   refreshGroupDisplay(g);
   return el;
-}
-
-// Move member track elements into the group's members slot
-function layoutGroupMembers(g){
-  if(!g.el) return;
-  const slot=g.el.querySelector('[data-grole="members"]');
-  const empty=g.el.querySelector('[data-grole="empty"]');
-  if(!slot) return;
-  const members=g.trackIds.map(tById).filter(Boolean);
-  if(empty) empty.style.display = members.length ? 'none' : 'block';
-  members.forEach(t=>{
-    if(!t.el) buildTrackElement(t);
-    t.el.classList.add('is-stem');
-    slot.appendChild(t.el); // MOVE the element here
-    if(!t.ws && t.src) initWS(t);
-  });
-}
-
-// Shared seek: scrub all members to the same position
-function onGroupSeek(gid, val){
-  const g=gById(gid); if(!g) return;
-  const fraction = val/1000;
-  g.trackIds.map(tById).filter(t=>t?.ws).forEach(t=>{
-    t.ws.seekTo(fraction);
-  });
 }
 
 function refreshGroupDisplay(g){
@@ -1013,56 +944,15 @@ function refreshGroupDisplay(g){
   const members=g.trackIds.map(tById).filter(Boolean);
   const playing=members.filter(t=>t.playing).length;
   const meta=g.el.querySelector('[data-grole="meta"]');
-  if(meta) meta.textContent=`${members.length} stem${members.length!==1?'s':''}${playing>0?` · ${playing} playing`:''}`;
+  if(meta) meta.textContent=`${members.length} track${members.length!==1?'s':''}${playing>0?` · ${playing} playing`:''}`;
   const vp=g.el.querySelector('[data-grole="vol-pct"]'); if(vp) vp.textContent=Math.round(g.volume*100)+'%';
   const vs=g.el.querySelector('[data-grole="vol-slider"]'); if(vs && parseFloat(vs.value)!==g.volume) vs.value=g.volume;
   const pb=g.el.querySelector('[data-grole="play"]');
   if(pb){ pb.textContent=playing>0?'⏸':'▶'; pb.classList.toggle('on',playing>0); }
   g.el.classList.toggle('is-playing',playing>0);
-  // Update shared duration display from leader (first member with WS)
-  const leader = members.find(t=>t.ws && t.ws.getDuration());
-  const dur = g.el.querySelector('[data-grole="time-dur"]');
-  if(dur){
-    if(leader){
-      dur.textContent = fmtT(leader.ws.getDuration());
-      dur.style.color='var(--muted2)';
-    } else {
-      dur.textContent = '--:--';
-      dur.style.color='var(--muted)';
-    }
-  }
 }
 
-// Tick: update group shared time + seek from the leader, every animation frame
-// while the group is playing. Also keep slaves loosely synced to the leader.
-function groupSyncTick(){
-  groups.forEach(g=>{
-    const members=g.trackIds.map(tById).filter(t=>t?.ws);
-    if(!members.length) return;
-    const leader=members.find(t=>t.playing) || members[0];
-    if(!leader.ws || !leader.ws.getDuration()) return;
-    const cur=leader.ws.getCurrentTime();
-    const dur=leader.ws.getDuration();
-    // Update shared display
-    if(!seekDragging['grp-'+g.id]){
-      const sk=g.el?.querySelector('[data-grole="seek"]'); if(sk) sk.value=(cur/dur)*1000;
-      const tc=g.el?.querySelector('[data-grole="time-cur"]'); if(tc) tc.textContent=fmtT(cur);
-    }
-    // Drift correction: if any slave is more than 100ms off the leader, snap it
-    if(leader.playing){
-      members.forEach(m=>{
-        if(m===leader||!m.ws||!m.playing) return;
-        const mt=m.ws.getCurrentTime();
-        if(Math.abs(mt-cur)>0.1) m.ws.seekTo(cur/(m.ws.getDuration()||1));
-      });
-    }
-  });
-}
-// Run the sync tick continuously via rAF
-(function startGroupSync(){
-  function loop(){ groupSyncTick(); requestAnimationFrame(loop); }
-  requestAnimationFrame(loop);
-})();
+
 
 // Update the small group badge on a track (shown when it's in a group)
 function refreshTrackGroupBadge(t){
@@ -1586,16 +1476,7 @@ function buildTrackElement(t){
   </div>
 </div>
 
-<!-- ─── STEM VIEW (active only when track is inside a group container) ─── -->
-<div class="stem-view">
-  <span class="stem-name" data-role="name-s"></span>
-  <div class="stem-wave" data-role="wave-stem"></div>
-  <div class="stem-vol-wrap">
-    <input type="range" data-role="vol-s" min="0" max="1" step="0.01" value="${t.volume}" oninput="onVol(${t.id},this.value)">
-    <span class="stem-vol-pct" data-role="volpct-s"></span>
-  </div>
-  <button class="stem-rm" onclick="removeTrackFromGroup(${t.id})" title="Remove from group">−</button>
-</div>`;
+`;
   t.el=el;
   refreshTrackDisplay(t);
   return el;
@@ -1762,10 +1643,8 @@ function layoutTracks(){
 
   sorted.forEach(t=>{
     if(!t.el) buildTrackElement(t);
-    const inGroup = !!groupOfTrack(t);
-    t.el.classList.toggle('is-stem', inGroup);
-    // Grouped tracks belong inside their group container, NOT in the pools
-    if(inGroup) return;
+    // Tracks always show normal — stem mode disabled for show-day reliability
+    t.el.classList.remove('is-stem');
     const expand=isTrackExpanded(t);
     t.el.classList.toggle('is-expanded',expand);
     refreshSceneButtons(t);
@@ -1780,27 +1659,7 @@ function layoutTracks(){
   });
 
   // Rebuild active pool grouped by category (BGM → SFX → AMB)
-  // Also: any group with playing members goes to the TOP of the active pool
-  activePool.querySelectorAll('.active-cat-divider, .grp-section').forEach(d=>d.remove());
-
-  const playingGroups = groups.filter(g=>g.trackIds.map(tById).some(t=>t?.playing));
-  if(playingGroups.length){
-    const sec=document.createElement('div');
-    sec.className='grp-section';
-    sec.style.gridColumn='1/-1';
-    const lbl=document.createElement('div');
-    lbl.className='grp-section-label';
-    lbl.innerHTML=`<span>GROUPS</span> <span style="color:var(--muted);font-size:9px;letter-spacing:1px;font-weight:400">Playing</span>`;
-    sec.appendChild(lbl);
-    playingGroups.forEach(g=>{
-      if(!g.el) buildGroupElement(g);
-      sec.appendChild(g.el);
-      layoutGroupMembers(g);
-      refreshGroupDisplay(g);
-    });
-    activePool.appendChild(sec);
-  }
-
+  activePool.querySelectorAll('.active-cat-divider').forEach(d=>d.remove());
   CAT_ORDER.forEach(cat=>{
     const items=activeByCat[cat];
     if(!items.length) return;
@@ -1808,30 +1667,27 @@ function layoutTracks(){
     div.className=`active-cat-divider ${cat}`;
     div.innerHTML=`<span>${cat}</span>`;
     activePool.appendChild(div);
-    items.forEach(t=>activePool.appendChild(t.el)); // MOVES existing element
+    items.forEach(t=>activePool.appendChild(t.el));
   });
 
-  // Rebuild inactive pool with idle group containers first, then category dividers + ungrouped tracks
+  // Rebuild inactive pool with group bars first, then category dividers + tracks
   inactivePool.querySelectorAll('.cat-divider, .grp-section').forEach(d=>d.remove());
 
-  const idleGroups = groups.filter(g=>!playingGroups.includes(g));
-  if(idleGroups.length){
+  if(groups.length){
     const grpSec=document.createElement('div');
     grpSec.className='grp-section';
     const lbl=document.createElement('div');
     lbl.className='grp-section-label';
     lbl.innerHTML=`<span>GROUPS</span> <span style="color:var(--muted);font-size:9px;letter-spacing:1px;font-weight:400">Stems / busses</span>`;
     grpSec.appendChild(lbl);
-    idleGroups.forEach(g=>{
+    groups.forEach(g=>{
       if(!g.el) buildGroupElement(g);
       grpSec.appendChild(g.el);
-      layoutGroupMembers(g);
       refreshGroupDisplay(g);
     });
     inactivePool.appendChild(grpSec);
   }
 
-  // Walk through cats and append divider + ungrouped tracks
   CAT_ORDER.forEach(cat=>{
     const items=inactiveByCat[cat];
     if(!items.length) return;
@@ -1840,18 +1696,15 @@ function layoutTracks(){
     div.innerHTML=`<span>${cat}</span> <span style="color:var(--muted);font-size:9px;letter-spacing:1px;font-weight:400">${CAT_DESC[cat]}</span>`;
     inactivePool.appendChild(div);
     items.forEach(t=>{
-      // Destroy WS for inactive tracks to free memory (only if not playing)
       if(t.ws && !t.playing){ t.ws.destroy(); t.ws=null; t.region=null; t._rp=null; }
-      inactivePool.appendChild(t.el); // MOVE element here
+      inactivePool.appendChild(t.el);
     });
   });
 
-  // Update header counts/visibility
-  const totalActive = activeCount + playingGroups.length;
-  document.getElementById('active-pool-header').style.display=totalActive>0?'flex':'none';
-  document.getElementById('active-pool-count').textContent=totalActive;
+  document.getElementById('active-pool-header').style.display=activeCount>0?'flex':'none';
+  document.getElementById('active-pool-count').textContent=activeCount;
   document.getElementById('inactive-pool-count').textContent=inactiveCount;
-  document.getElementById('inactive-pool-header').style.display=(inactiveCount>0||idleGroups.length>0)?'flex':'none';
+  document.getElementById('inactive-pool-header').style.display=inactiveCount>0?'flex':'none';
   document.getElementById('empty-msg').style.display=tracks.length===0?'block':'none';
 
   updateStatus();
@@ -1901,14 +1754,11 @@ function setCat(id,cat){
 // ════════════════════════════════════════════════
 function initWS(t){
   if(t.ws) return; // already alive
-  const inGroup = !!groupOfTrack(t);
-  // Stems use the slim stem-wave container (no loop region, smaller); ungrouped use the full one
-  const waveContainer = inGroup ? role(t,'wave-stem') : role(t,'wave');
+  const waveContainer = role(t,'wave');
   if(!waveContainer || !t.src) return;
   let rp = null;
-  // Only attach region plugin for ungrouped tracks (stems don't have loops)
-  if(!inGroup){ try{ rp=WaveSurfer.RegionsPlugin.create(); }catch(e){} }
-  const opts={container:waveContainer,waveColor:'#1c2830',progressColor:t.accent,cursorColor:'rgba(255,255,255,.5)',cursorWidth:1,height:inGroup?36:74,barWidth:2,barGap:1,barRadius:2,normalize:true,interact:!inGroup};
+  try{ rp=WaveSurfer.RegionsPlugin.create(); }catch(e){}
+  const opts={container:waveContainer,waveColor:'#1c2830',progressColor:t.accent,cursorColor:'rgba(255,255,255,.5)',cursorWidth:1,height:74,barWidth:2,barGap:1,barRadius:2,normalize:true,interact:true};
   if(rp) opts.plugins=[rp];
   const ws=WaveSurfer.create(opts);
   t.ws=ws; t._rp=rp||null;
@@ -1932,9 +1782,9 @@ function initWS(t){
     const sk=role(t,'seek-e'); if(sk) sk.value=(cur/dur)*1000;
     const tcur=role(t,'tcur'); if(tcur) tcur.textContent=fmtT(cur);
   });
-  ws.on('play',()=>{ t.playing=true; refreshPlayUI(t); updateStatus(); startAutoStop(t); if(groupOfTrack(t)) layoutTracks(); });
-  ws.on('pause',()=>{ t.playing=false; refreshPlayUI(t); updateStatus(); if(groupOfTrack(t)) layoutTracks(); });
-  ws.on('finish',()=>{ t.playing=false; refreshPlayUI(t); updateStatus(); if(groupOfTrack(t)) layoutTracks(); });
+  ws.on('play',()=>{ t.playing=true; refreshPlayUI(t); updateStatus(); startAutoStop(t); });
+  ws.on('pause',()=>{ t.playing=false; refreshPlayUI(t); updateStatus(); });
+  ws.on('finish',()=>{ t.playing=false; refreshPlayUI(t); updateStatus(); });
   if(rp){
     rp.on('region-updated',r=>{ t.loopStart=r.start; t.loopEnd=r.end; refreshLoopUI(t); autoSave(); });
     rp.on('region-created',r=>{ rp.getRegions().forEach(x=>{ if(x.id!==r.id) x.remove(); }); t.region=r; t.loopStart=r.start; t.loopEnd=r.end; refreshLoopUI(t); autoSave(); });
