@@ -2000,6 +2000,8 @@ function onVol(id,v){
   const vpc=role(t,'volpct-c'); if(vpc) vpc.textContent=Math.round(t.volume*100)+'%';
   const vpe=role(t,'volpct-e'); if(vpe) vpe.textContent=Math.round(t.volume*100)+'%';
   const vps=role(t,'volpct-s'); if(vps) vps.textContent=Math.round(t.volume*100)+'%';
+  // Visual muted state
+  if(t.el) t.el.classList.toggle('is-muted', t.volume<=0.02);
   // Ease audio toward target
   startVolEase(t);
   autoSave();
